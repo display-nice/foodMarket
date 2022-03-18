@@ -1,3 +1,18 @@
+const callbackButtons = document.querySelectorAll('[data-modal]');
+const closeCallbackWindow = document.querySelector('[data-close]');
+const callbackWindow = document.querySelector('.modal');
+
+callbackButtons.forEach( function(button) {
+    button.addEventListener('click', function () {        
+        callbackWindow.style.cssText = "display: block";
+    });
+});
+
+closeCallbackWindow.onclick = function () {    
+    callbackWindow.style.cssText = "display: none";
+};
+
+
 // -----------------Таймер обратного отсчёта времени акции-------------------
 
 let daysLeft = document.querySelector('#days'),
@@ -20,3 +35,4 @@ function calculateTime(endTime) {
 }
 // запуск функции расчёта каждую секунду
 const promoCountdown = setInterval(calculateTime, 1000, endTime);
+
