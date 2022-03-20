@@ -1,16 +1,28 @@
 const callbackButtons = document.querySelectorAll('[data-modal]');
-const closeCallbackWindow = document.querySelector('[data-close]');
-const callbackWindow = document.querySelector('.modal');
+const callbackWindowX = document.querySelector('.modal__close');
+const callbackScreen = document.querySelector('.modal');
 
-callbackButtons.forEach( function(button) {
+//навешиваем открытие окна "перезвоните мне" на каждую соответствующую кнопку
+callbackButtons.forEach( button => {
     button.addEventListener('click', function () {        
-        callbackWindow.style.cssText = "display: block";
+        callbackScreen.style.cssText = "display: block";
+        document.body.style.overflow = "hidden"; // останавливаем прокрутку страницы при показе окна
     });
 });
 
-closeCallbackWindow.onclick = function () {    
-    callbackWindow.style.cssText = "display: none";
+const closeCallbackScreen = function () {
+    callbackScreen.style.cssText = "display: none";
+    document.body.style.overflow = ""; // возвращаем прокрутку страницы при скрытии окна
 };
+
+callbackScreen.addEventListener('click', (event) => {    
+    if (event.target === callbackScreen) {
+        closeCallbackScreen();
+    }
+    else if (event.target === callbackWindowX) {
+        closeCallbackScreen();
+    }
+});
 
 
 // -----------------Таймер обратного отсчёта времени акции-------------------
