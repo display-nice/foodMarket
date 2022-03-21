@@ -19,9 +19,7 @@ const closeCallbackScreen = function () {
 
 // навешиваем открытие окна "перезвоните мне" на каждую соответствующую кнопку
 callbackButtons.forEach( button => {
-    button.addEventListener('click', function () {        
-        openCallbackScreen();
-    });
+    button.addEventListener('click', openCallbackScreen);
 });
 
 // при клике закрываем окно
@@ -42,7 +40,18 @@ document.addEventListener('keydown', (event) => {
 });
 
 // модальное окно откроется через секунд после открытия страницы
-let callbackTimerID = setTimeout(openCallbackScreen, 3000);
+let callbackTimerID = setTimeout(openCallbackScreen, 30000);
+
+// открываем окно при прокрутке до конца страницы
+const openCallbackScreenByScroll = function () {
+    //Если прокрученная часть (window.pageYOffset) + видимая часть >= всей высоте сайта, значит пользак долистал до конца страницы;
+    if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+        openCallbackScreen();
+        // делаем открытие окна однократным;
+        window.removeEventListener('scroll', openCallbackScreenByScroll);
+    }
+};
+window.addEventListener('scroll', openCallbackScreenByScroll);
 
 
 
