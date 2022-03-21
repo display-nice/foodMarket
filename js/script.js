@@ -2,19 +2,29 @@ const callbackButtons = document.querySelectorAll('[data-modal]');
 const callbackWindowX = document.querySelector('.modal__close');
 const callbackScreen = document.querySelector('.modal');
 
-//навешиваем открытие окна "перезвоните мне" на каждую соответствующую кнопку
-callbackButtons.forEach( button => {
-    button.addEventListener('click', function () {        
-        callbackScreen.style.cssText = "display: block";
-        document.body.style.overflow = "hidden"; // останавливаем прокрутку страницы при показе окна
-    });
-});
+// функция открытия окна
+const openCallbackScreen = function () {
+    callbackScreen.style.cssText = "display: block";
+    // останавливаем прокрутку страницы при показе окна
+    document.body.style.overflow = "hidden"; 
+    // если пользак открыл окно сам, то останавливаем таймер, чтобы онко ему больше не показывалось
+    clearInterval(callbackTimerID); 
+};
 
+// функция закрытия окна
 const closeCallbackScreen = function () {
     callbackScreen.style.cssText = "display: none";
     document.body.style.overflow = ""; // возвращаем прокрутку страницы при скрытии окна
 };
 
+// навешиваем открытие окна "перезвоните мне" на каждую соответствующую кнопку
+callbackButtons.forEach( button => {
+    button.addEventListener('click', function () {        
+        openCallbackScreen();
+    });
+});
+
+// при клике закрываем окно
 callbackScreen.addEventListener('click', (event) => {    
     if (event.target === callbackScreen) {
         closeCallbackScreen();
@@ -24,8 +34,19 @@ callbackScreen.addEventListener('click', (event) => {
     }
 });
 
+// при нажатии эскейп закрываем окно
+document.addEventListener('keydown', (event) => {
+    if (event.code === "Escape" && callbackScreen.style.cssText == "display: block;") {
+        closeCallbackScreen();
+    }
+});
 
-// -----------------Таймер обратного отсчёта времени акции-------------------
+// модальное окно откроется через секунд после открытия страницы
+let callbackTimerID = setTimeout(openCallbackScreen, 3000);
+
+
+
+// -----------------ТАЙМЕР ОБРАТНОГО ОТСЧЁТА ВРЕМЕНИ АКЦИИ-------------------
 
 let daysLeft = document.querySelector('#days'),
     hoursLeft = document.querySelector('#hours'),
@@ -47,4 +68,3 @@ function calculateTime(endTime) {
 }
 // запуск функции расчёта каждую секунду
 const promoCountdown = setInterval(calculateTime, 1000, endTime);
-
