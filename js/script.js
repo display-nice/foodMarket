@@ -1,12 +1,49 @@
+// ----------------------------ТАБЫ СО СТИЛЯМИ ПИТАНИЯ ---------------------------------------
+let tabHeaderParent = document.querySelector('.tabheader__items');
+let tabs = document.querySelectorAll('.tabheader__item');
+let tabsContent = document.querySelectorAll('.tabcontent');
+
+function hideTabContent() {
+    tabsContent.forEach(item => {
+        item.style.cssText = "display: none";
+    });
+    tabs.forEach(item => {
+        item.classList.remove('tabheader__item_active');
+    });
+}
+
+function showTabContent(i = 0) {
+    tabsContent[i].style.cssText = "display: block";
+    tabs[i].classList.add('tabheader__item_active');
+}
+hideTabContent();
+showTabContent();
+
+tabHeaderParent.addEventListener('click', (event) => {
+    if (event.target && event.target.classList.contains('tabheader__item')) {
+        tabs.forEach((item, i) => {
+            if (event.target == item) {
+                hideTabContent();
+                showTabContent(i);
+            }
+        });
+    }
+});
+
+
+
 // ----------------------------СОЗДАНИЕ КАРТОЧЕК "НАШЕ МЕНЮ НА ДЕНЬ"---------------------------------------
 class MenuItem {
-    constructor (imgSrc, alt, title, descr, price, parentSelector) {
+    // ... classes - это оператор Rest, формирует массив из всех переданных свойств после parentSelector
+    constructor (imgSrc, alt, title, descr, price, parentSelector, ...classes) {
         this.imgSrc = imgSrc;
         this.alt = alt;
         this.title = title;
         this.descr = descr;
         this.price = price;
+        // здесь мы преобразуем полученную строку в конкретного родителя элемента
         this.parent = document.querySelector(parentSelector);
+        this.classes = classes;
         this.currencyRate = 100; // кол-во рублей за доллар, подразумевается что цена приходит в долларах
         this.convertToRubles();
     }
@@ -15,18 +52,26 @@ class MenuItem {
     }
     createMenuItem() {
         let element = document.createElement('div');
+        // if отвечает за установку класса по умолчанию, если в оператор Rest (... classes) ничего не пришло
+        if (this.classes.length === 0) {
+            element.classList.add('menu__item');
+        } else {
+            // если что-то в ... classes есть, то происходит распаковка массива и преобразование 
+            // значений элементов массива в классы
+            this.classes.forEach(newClass => element.classList.add(newClass));
+        }
+        // здесь просто создаётся html-код нового элемента
         element.innerHTML = `
-        <div class="menu__item">
-            <img src="${this.imgSrc}" alt="${this.alt}">
-            <h3 class="menu__item-subtitle">${this.title}</h3>
-            <div class="menu__item-descr">${this.descr}</div>
-            <div class="menu__item-divider"></div>
-            <div class="menu__item-price">
-                <div class="menu__item-cost">Цена:</div>
-                <div class="menu__item-total"><span>${this.price}</span> руб/день</div>
-            </div>
+        <img src="${this.imgSrc}" alt="${this.alt}">
+        <h3 class="menu__item-subtitle">${this.title}</h3>
+        <div class="menu__item-descr">${this.descr}</div>
+        <div class="menu__item-divider"></div>
+        <div class="menu__item-price">
+        <div class="menu__item-cost">Цена:</div>
+            <div class="menu__item-total"><span>${this.price}</span> руб/день</div>
         </div>
         `;
+        // вставка нового элемента на страницу
         this.parent.append(element);
     }
 }
