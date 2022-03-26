@@ -16,10 +16,10 @@ function postData(form) {
         e.preventDefault(); // Предотвращаем стандартное действие формы
         
         // 2.  После отправки разговариваем с пользователем
-        const statusMessage = document.createElement('div'); // Создаём пустой див        
-        statusMessage.classList.add('status'); // Добавляем класс пустому диву
-        statusMessage.textContent = message.loading; // Устанавливаем текст сообщения по-умолчанию
-        form.append(statusMessage); // При отправке пользаком формы показываем сообщение о загрузке
+        // const statusMessage = document.createElement('div'); // Создаём пустой див        
+        // statusMessage.classList.add('status'); // Добавляем класс пустому диву
+        // statusMessage.textContent = message.loading; // Устанавливаем текст сообщения по-умолчанию
+        // form.append(statusMessage); // При отправке пользаком формы показываем сообщение о загрузке
         
         // 1. Сам запрос
         const request = new XMLHttpRequest(); // Записываем запрос в переменную\константу
@@ -46,16 +46,47 @@ function postData(form) {
         request.addEventListener('load', () => { //Отслеживаем статус запроса
             if (request.status === 200) { // если приходит успешный статус 200, рапортуем об успехе
                 console.log(request.response); // выводим в консоль ответ на запрос
-                statusMessage.textContent = message.success;
-                form.reset(); // после успешной отправки форма сбрасывается
-                setTimeout( () => { // и само сообщение исчезает через 2 секунды
-                    statusMessage.remove();
-                }, 2000);
+                showThanksModal(message.success);
+                form.reset(); // после успешной отправки форма сбрасывается                
+                // statusMessage.remove();                - можно удалить, не используется 
             } else { // если другой статус, кроме 200, рапортуем об ошибке
-                statusMessage.textContent = message.failure;
+                showThanksModal(message.failure);
             }
         });
     });    
+}
+// После отправки разговариваем с пользователем
+function showThanksModal (message) {
+    let defaultModalDialog = document.querySelector('.modal__dialog');
+    defaultModalDialog.hidden = true;
+    openCallbackScreen();
+
+    let thanksModal = document.createElement('div');
+    thanksModal.classList.add('modal__dialog');
+    thanksModal.innerHTML = `
+        <div class="modal__content">
+            <div data-close class="modal__close">×</div>
+            <div class="modal__title">${message}</div>
+        </div>
+    `;
+    document.querySelector('.modal').append(thanksModal);
+
+    // функция закрытия окна с отчётом об отправке
+    function closeThanksModal() {
+        thanksModal.remove(); //удаляем окно
+        defaultModalDialog.hidden = false; //восстанавливаем видимость
+        closeCallbackScreen(); // закрываем окно "перезвонить нам"
+    }
+
+    // по нажатию на крестик вызываем функцию и удаляем окно
+    thanksModal.onclick = function() { 
+        closeThanksModal();
+    };
+
+    // окно также самоликвидируется через 4 секунды
+    setTimeout( () => {
+        closeThanksModal();
+    }, 4000);
 }
 
 
@@ -202,9 +233,9 @@ callbackButtons.forEach( button => {
 // при клике закрываем окно
 callbackScreen.addEventListener('click', (event) => {    
     if (event.target === callbackScreen) {
-        closeCallbackScreen();
+        closeCallbackScreen(); // закрываем по нажатию на пустое место за пределами окна
     }
-    else if (event.target === callbackWindowX) {
+    else if (event.target === callbackWindowX) { // закрываем по нажатию на крестик
         closeCallbackScreen();
     }
 });
@@ -217,7 +248,7 @@ document.addEventListener('keydown', (event) => {
 });
 
 // модальное окно откроется через секунд после открытия страницы
-let callbackTimerID = setTimeout(openCallbackScreen, 30000);
+let callbackTimerID = setTimeout(openCallbackScreen, 50000);
 
 // открываем окно при прокрутке до конца страницы
 const openCallbackScreenByScroll = function () {
