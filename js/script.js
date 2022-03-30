@@ -7,54 +7,94 @@ const message = { // Создаём объект-хранилище тексто
     success: "Спасибо! Мы с вами свяжемся ",
     failure: "Произошла ошибка"
 };
-forms.forEach(item => { // навешиваем на каждую форму функцию postData
-    postData(item);
+forms.forEach(item => { // навешиваем на каждую форму функцию bindPostData
+    bindPostData(item);
 });
 
-function postData(form) {
+// // функция с настройками, асинхронное ожидание
+// const postData = async (url, data) => { // async означает, что внутри функции будет асинхронный код
+//     const res = await fetch(url, { // await говорит, что мы сначала ждём выполнения фетча, потом присваиваем значение переменной
+//         method: "POST", // это стандартный объект с настройками для фетча
+//         headers: {'Content-type': 'application/json'},
+//         body: data
+//     });
+//     return await res.json(); // ждём трансформации ответа в джсон и возвращаем
+// };
+
+function bindPostData(form) {
     form.addEventListener('submit', (e) => { // Добавляем на форму обработчик событий (событие - отправка формы)
         e.preventDefault(); // Предотвращаем стандартное действие формы
-        
-        // 2.  После отправки разговариваем с пользователем
-        // const statusMessage = document.createElement('div'); // Создаём пустой див        
-        // statusMessage.classList.add('status'); // Добавляем класс пустому диву
-        // statusMessage.textContent = message.loading; // Устанавливаем текст сообщения по-умолчанию
-        // form.append(statusMessage); // При отправке пользаком формы показываем сообщение о загрузке
-        
-        // 1. Сам запрос
-        const request = new XMLHttpRequest(); // Записываем запрос в переменную\константу
-        request.open('POST', 'server.php'); // Указываем параметры запроса
-        request.setRequestHeader('Content-type', 'application/json'); //Заголовок запроса для JSON
-        
-        // вариант с отправкой данных в виде объекта; заголовок, если у нас объект, 
-        // указывать не нужно, работать не будет!
-        // request.setRequestHeader('Content-type', 'multipart/form-data');
-
-        const formData = new FormData(form); //Собираем данные из формы в один объект для последующей отправки объекта в запросе:
-        
-        // +допнастройка для отправки данных в виде JSON; Если не нужен - удалить!
-        // php по умолчанию не работает с JSON, нужно их декодировать на сервере (смотри server.php)
+        const formData = new FormData(form); // Собираем данные из формы в один объект для последующей отправки объекта в запросе;
         const object = {};
         formData.forEach(function(value, key) {
             object[key] = value;
         });
-        const json = JSON.stringify(object);
-        request.send(json);
-        // request.send(formData); // Отправляем запрос для данных в виде объекта
-
-        // сам запрос
-        request.addEventListener('load', () => { //Отслеживаем статус запроса
-            if (request.status === 200) { // если приходит успешный статус 200, рапортуем об успехе
-                console.log(request.response); // выводим в консоль ответ на запрос
-                showThanksModal(message.success);
-                form.reset(); // после успешной отправки форма сбрасывается                
-                // statusMessage.remove();                - можно удалить, не используется 
-            } else { // если другой статус, кроме 200, рапортуем об ошибке
-                showThanksModal(message.failure);
-            }
+        
+        fetch('server.php', {
+            method: "POST",
+            headers: {'Content-type': 'application/json'},
+            body: JSON.stringify(object)
+        })        
+        .then(data => data.text())
+        .then(data => {
+            console.log(data); // выводим в консоль ответ на запрос
+            showThanksModal(message.success);
+            form.reset(); // после успешной отправки форма сбрасывается 
+        })
+        .catch(() => {
+            showThanksModal(message.failure);
+        })
+        .finally(() => {
+            form.reset();
         });
     });    
 }
+
+// Ниже просто для информации приведено тоже самое, но в варианте, реализованном через XMLHTTPRequest и для данных
+// которые приходят в json-формате. Если нужны данные в виде объекта, то см. комментарии по замене строк, комменты
+// начинаются с "ДЛЯ ОБЪЕКТА:"
+// const forms = document.querySelectorAll('form'); // Берём все формы
+// const message = { // Создаём объект-хранилище текстов сообщений
+//     loading: "Загрузка",
+//     success: "Спасибо! Мы с вами свяжемся ",
+//     failure: "Произошла ошибка"
+// };
+// forms.forEach(item => { // навешиваем на каждую форму функцию PostData
+//     PostData(item);
+// });
+// function PostData(form) {
+//     form.addEventListener('submit', (e) => { // Добавляем на форму обработчик событий (событие - отправка формы)
+//         e.preventDefault(); // Предотвращаем стандартное действие формы
+//         // 1. Сам запрос
+//         const request = new XMLHttpRequest(); // Записываем запрос в переменную\константу
+//         request.open('POST', 'server.php'); // Указываем параметры запроса
+//         request.setRequestHeader('Content-type', 'application/json'); // Заголовок запроса для JSON        
+//         // ДЛЯ ОБЪЕКТА: заголовок, если у нас объект, указывать не нужно, а то работать не будет!
+//         // request.setRequestHeader('Content-type', 'multipart/form-data'); - пусть будет тут на всякий случай;
+//         const formData = new FormData(form); //Собираем данные из формы в один объект для последующей отправки объекта в запросе:
+//         // Ниже блок кода с допнастройкой для отправки данных в виде JSON; Если не нужен - удалить!
+//         // php по умолчанию не работает с JSON, нужно их декодировать на сервере (смотри server.php)
+//         const object = {};
+//         formData.forEach(function(value, key) {
+//             object[key] = value;
+//         });
+//         const json = JSON.stringify(object);
+//         request.send(json);
+//         // ДЛЯ ОБЪЕКТА: request.send(formData);
+
+//         // сам запрос
+//         request.addEventListener('load', () => { //Отслеживаем статус запроса
+//             if (request.status === 200) { // если приходит успешный статус 200, рапортуем об успехе
+//                 console.log(request.response); // выводим в консоль ответ на запрос
+//                 showThanksModal(message.success);
+//                 form.reset(); // после успешной отправки форма сбрасывается                
+//                 // statusMessage.remove();                - можно удалить, не используется 
+//             } else { // если другой статус, кроме 200, рапортуем об ошибке
+//                 showThanksModal(message.failure);
+//             }
+//         });
+//     });    
+// }
 // После отправки разговариваем с пользователем
 function showThanksModal (message) {
     let defaultModalDialog = document.querySelector('.modal__dialog');
