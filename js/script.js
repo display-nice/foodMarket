@@ -50,7 +50,7 @@ function bindPostData(form) {
     });    
 }
 
-// Ниже просто для информации приведено тоже самое, но в варианте, реализованном через XMLHTTPRequest и для данных
+// Ниже в закомментированном виде просто для информации приведено тоже самое, но в варианте, реализованном через XMLHTTPRequest и для данных
 // которые приходят в json-формате. Если нужны данные в виде объекта, то см. комментарии по замене строк, комменты
 // начинаются с "ДЛЯ ОБЪЕКТА:"
 // const forms = document.querySelectorAll('form'); // Берём все формы
@@ -95,7 +95,8 @@ function bindPostData(form) {
 //         });
 //     });    
 // }
-// После отправки разговариваем с пользователем
+
+// После отправки разговариваем с пользователем - показываем модальное окно
 function showThanksModal (message) {
     let defaultModalDialog = document.querySelector('.modal__dialog');
     defaultModalDialog.hidden = true;
@@ -166,6 +167,7 @@ tabHeaderParent.addEventListener('click', (event) => {
 
 
 // ----------------------------СОЗДАНИЕ КАРТОЧЕК "НАШЕ МЕНЮ НА ДЕНЬ"---------------------------------------
+// С использованием коструктора классов, для получения данных по карточкам с сервера и отрисовки их на странице
 class MenuItem {
     // ... classes - это оператор Rest, формирует массив из всех переданных свойств после parentSelector
     constructor (imgSrc, alt, title, descr, price, parentSelector, ...classes) {
@@ -208,40 +210,70 @@ class MenuItem {
         this.parent.append(element);
     }
 }
-new MenuItem(
-    "img/tabs/vegy.jpg",
-    "vegy",
-    'Меню "Фитнес"',
-    'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-    "10",
-    ".menu .container"
-).createMenuItem();
-new MenuItem(
-    "img/tabs/elite.jpg",
-    "elite",
-    'Меню “Премиум”',
-    'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-    "20",
-    ".menu .container"
-).createMenuItem();
-new MenuItem(
-    "img/tabs/post.jpg",
-    "post",
-    'Меню “Постное”',
-    'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков. ',
-    "15",
-    ".menu .container"
-).createMenuItem();
 
-// let card1 = new MenuItem(
+// функция для получения данных для генерации карточек
+const getResource = async (url) => { // async означает, что внутри функции будет асинхронный код
+    const res = await fetch(url);
+    if (!res.ok) { // этот иф отлавливает ошибки статуса по HTTP (т.к. сам фетч не считает их за ошибки)
+        throw new Error(`Не могу принести ${url}, статус: ${res.status}`);
+    }
+    return await res.json(); // ждём трансформации ответа в объект и возвращаем
+};
+ 
+getResource('http://localhost:3000/menu')
+.then(data => {
+    data.forEach(({img, alt, title, descr, price}) => { // перебираем объект, деструктурируем по отдельным частям
+        new MenuItem(img, alt, title, descr, price, '.menu .container').createMenuItem(); // конструктор классов создаёт новую карточку
+    });
+});
+
+// Второй вариант создания карточек, попроще, без конструктора классов, если надо создать карточки однократно
+getResource('http://localhost:3000/menu')
+.then(data => createCard(data));
+function createCard(data) {
+    data.forEach(({img, alt, title, descr, price}) => {
+        let element = document.createElement('div');
+        element.classList.add('menu__item');
+        element.innerHTML = `
+        <img src="${img}" alt="${alt}">
+        <h3 class="menu__item-subtitle">${title}</h3>
+        <div class="menu__item-descr">${descr}</div>
+        <div class="menu__item-divider"></div>
+        <div class="menu__item-price">
+        <div class="menu__item-cost">Цена:</div>
+            <div class="menu__item-total"><span>${price}</span> руб/день</div>
+        </div>
+        `;
+        document.querySelector('.menu .container').append(element);
+    });
+}
+
+// Это просто набор данных для карточек для тестирования, здесь в коде нигде не используется
+// оставлено на всякий случай
+// new MenuItem(
 //     "img/tabs/vegy.jpg",
 //     "vegy",
 //     'Меню "Фитнес"',
-//     'Меню "Фитнес" - это новый подход к приготовлению блюд: ',
+//     'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
 //     "10",
 //     ".menu .container"
-// );
-// card1.createMenuItem();
+// ).createMenuItem();
+// new MenuItem(
+//     "img/tabs/elite.jpg",
+//     "elite",
+//     'Меню “Премиум”',
+//     'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+//     "20",
+//     ".menu .container"
+// ).createMenuItem();
+// new MenuItem(
+//     "img/tabs/post.jpg",
+//     "post",
+//     'Меню “Постное”',
+//     'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков. ',
+//     "15",
+//     ".menu .container"
+// ).createMenuItem();
 
 
 
@@ -324,3 +356,51 @@ function calculateTime(endTime) {
 }
 // запуск функции расчёта каждую секунду
 const promoCountdown = setInterval(calculateTime, 1000, endTime);
+
+// ----------------------------- Слайдер -------------------------------------------
+const slides = document.querySelectorAll('.offer__slide');
+const prev = document.querySelector('.offer__slider-prev');
+const next = document.querySelector('.offer__slider-next');
+const total = document.querySelector('#total');
+const current = document.querySelector('#current');
+let slideIndex = 1;
+
+showSlides(1); // первичный запуск функции для установки первого слайда
+
+// проверка на количество слайдов, надо ли добавлять нолик для отображения перед номером слайда
+if (slides.length < 10) {
+    total.textContent = `0${slides.length}`;
+} else {
+    total.textContent = slides.length;
+}
+
+
+function showSlides(n) {
+    // установка индекса слайдов при выходе за допустимые границы
+    if (n > slides.length) {
+        slideIndex = 1;
+    }
+    if (n < 1) {
+        slideIndex = slides.length;
+    }
+    // отображение слайдов. сначала все скрываем, затем показываем нужный.
+    slides.forEach(slide => slide.style.display = 'none');
+    slides[slideIndex - 1].style.display = 'block';
+    // показывает номер текущего слайда
+    if (slides.length < 10) {
+        current.textContent = `0${slideIndex}`;
+    } else {
+        current.textContent = slideIndex;
+    }
+}
+
+function plusSlides(n) {
+    showSlides(slideIndex += 1);
+}
+
+prev.addEventListener('click', () => {
+    plusSlides(-1);
+});
+next.addEventListener('click', () => {
+    plusSlides(1);
+});
