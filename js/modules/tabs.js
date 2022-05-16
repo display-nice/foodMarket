@@ -1,5 +1,5 @@
+// ----------------------------ТАБЫ СО СТИЛЯМИ ПИТАНИЯ ---------------------------------------
 function tabs () {
-    // ----------------------------ТАБЫ СО СТИЛЯМИ ПИТАНИЯ ---------------------------------------
     let tabHeaderParent = document.querySelector('.tabheader__items');
     let tabs = document.querySelectorAll('.tabheader__item');
     let tabsContent = document.querySelectorAll('.tabcontent');
