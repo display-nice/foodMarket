@@ -1,10 +1,10 @@
-function timer () {
+function timer (endTime) {
     // -------------------------------ТАЙМЕР ОБРАТНОГО ОТСЧЁТА ВРЕМЕНИ АКЦИИ-----------------------------------
     let daysLeft = document.querySelector('#days'),
         hoursLeft = document.querySelector('#hours'),
         minutesLeft = document.querySelector('#minutes'),
         secondsLeft = document.querySelector('#seconds');
-    const endTime = '2022-06-27';
+    // const endTime = '2022-06-27';
 
     function calculateTime(endTime) {
         let x = Date.parse(endTime) - new Date();
@@ -21,4 +21,4 @@ function timer () {
     // запуск функции расчёта каждую секунду
     const promoCountdown = setInterval(calculateTime, 1000, endTime);
 }
-module.exports = timer;
+export default timer;

@@ -1,3 +1,4 @@
+import {getResource} from '../services/services';
 // ----------------------------СОЗДАНИЕ КАРТОЧЕК "НАШЕ МЕНЮ НА ДЕНЬ"---------------------------------------
 function cards() {
     // С использованием коструктора классов, для получения данных по карточкам с сервера и отрисовки их на странице
@@ -45,13 +46,13 @@ function cards() {
     }
 
     // функция для получения данных для генерации карточек
-    const getResource = async (url) => { // async означает, что внутри функции будет асинхронный код
-        const res = await fetch(url);
-        if (!res.ok) { // этот иф отлавливает ошибки статуса по HTTP (т.к. сам фетч не считает их за ошибки)
-            throw new Error(`Не могу принести ${url}, статус: ${res.status}`);
-        }
-        return await res.json(); // ждём трансформации ответа в объект и возвращаем
-    };
+    // const getResource = async (url) => { // async означает, что внутри функции будет асинхронный код
+    //     const res = await fetch(url);
+    //     if (!res.ok) { // этот иф отлавливает ошибки статуса по HTTP (т.к. сам фетч не считает их за ошибки)
+    //         throw new Error(`Не могу принести ${url}, статус: ${res.status}`);
+    //     }
+    //     return await res.json(); // ждём трансформации ответа в объект и возвращаем
+    // };
     
     getResource('http://localhost:3000/menu')
     .then(data => {
@@ -110,4 +111,4 @@ function cards() {
 
 }
 
-module.exports = cards;
+export default cards;

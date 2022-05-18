@@ -103,4 +103,4 @@ function calc () {
     getConstitutionInfo('#age');
 }
 
-module.exports = calc;
+export default calc;

@@ -1,8 +1,11 @@
-function form () {
+import {openCallbackScreen, closeCallbackScreen} from './modal';
+import {postData} from '../services/services';
+
+function form (formSelector, modalTimerID) {
     // ----------------------------Отправка формы на сервер ---------------------------------------
     // сбросить кэш на винде: shift+f5
 
-    const forms = document.querySelectorAll('form'); // Берём все формы
+    const forms = document.querySelectorAll(formSelector); // Берём все формы
     const message = { // Создаём объект-хранилище текстов сообщений
         loading: "Загрузка",
         success: "Спасибо! Мы с вами свяжемся ",
@@ -12,15 +15,7 @@ function form () {
         bindPostData(item);
     });
 
-    // функция с настройками, асинхронное ожидание
-    const postData = async (url, data) => { // async означает, что внутри функции будет асинхронный код
-        const res = await fetch(url, { // await говорит, что мы сначала ждём выполнения фетча, потом присваиваем значение переменной
-            method: "POST", // это стандартный объект с настройками для фетча
-            headers: {'Content-type': 'application/json'},
-            body: data
-        });
-        return await res.json(); // ждём трансформации ответа в джсон и возвращаем
-    };
+
 
     function bindPostData(form) {
         form.addEventListener('submit', (e) => { // Добавляем на форму обработчик событий (событие - отправка формы)
@@ -101,7 +96,7 @@ function form () {
     function showThanksModal (message) {
         let defaultModalDialog = document.querySelector('.modal__dialog');
         defaultModalDialog.hidden = true;
-        openCallbackScreen();
+        openCallbackScreen('.modal', modalTimerID);
 
         let thanksModal = document.createElement('div');
         thanksModal.classList.add('modal__dialog');
@@ -127,9 +122,9 @@ function form () {
 
         // окно также самоликвидируется через 4 секунды
         setTimeout( () => {
-            closeThanksModal();
+            closeThanksModal('.modal');
         }, 4000);
     }
 }
 
-module.exports = form;
+export default form;

@@ -149,7 +149,6 @@ function slider () {
     //     total.textContent = slides.length;
     // }
 
-
     // function showSlides(n) {
     //     // установка индекса слайдов при выходе за допустимые границы
     //     if (n > slides.length) {
@@ -181,4 +180,4 @@ function slider () {
     // });
 }
 
-module.exports = slider;
+export default slider;
