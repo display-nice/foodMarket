@@ -16,4 +16,5 @@ async function getResource (url) { // async означает, что внутр�
     }
     return await res.json(); // ждём трансформации ответа в объект и возвращаем
 };
+
 export {postData, getResource};

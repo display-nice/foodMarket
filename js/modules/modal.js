@@ -5,7 +5,6 @@ const openCallbackScreen = function (modalSelector, modalTimerID) {
     // останавливаем прокрутку страницы при показе окна
     document.body.style.overflow = "hidden"; 
     // если пользак открыл окно сам, то останавливаем таймер, чтобы онко ему больше не показывалось
-    console.log(modalTimerID);
     if (modalTimerID) {
         clearInterval(modalTimerID);
     }
@@ -46,7 +45,7 @@ function modal (triggerSelector, modalSelector, modalTimerID) {
         }
     });
 
-    // // модальное окно откроется через секунд после открытия страницы
+    // модальное окно откроется через 50 секунд после открытия страницы
     // let callbackTimerID = setTimeout(openCallbackScreen, 50000);
 
     // открываем окно при прокрутке до конца страницы
