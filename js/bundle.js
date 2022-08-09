@@ -261,7 +261,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function form (formSelector, modalTimerID) {
     // ----------------------------Отправка формы на сервер ---------------------------------------
-    // сбросить кэш на винде: shift+f5
+    // сбросить кэш на винде: shift+f5, либо ctrl+f5 (firefox)
 
     const forms = document.querySelectorAll(formSelector); // Берём все формы
     const message = { // Создаём объект-хранилище текстов сообщений
@@ -273,8 +273,6 @@ function form (formSelector, modalTimerID) {
         bindPostData(item);
     });
 
-
-
     function bindPostData(form) {
         form.addEventListener('submit', (e) => { // Добавляем на форму обработчик событий (событие - отправка формы)
             e.preventDefault(); // Предотвращаем стандартное действие формы
@@ -283,7 +281,7 @@ function form (formSelector, modalTimerID) {
             //берём formData, превращ. в массив массивов, кот. превращ. в объект, кот. превращ. в джсон.
             const json = JSON.stringify( Object.fromEntries(formData.entries()) );
 
-            // альтернативный вариант преобразования в объект (объект ли? я уже запутался)
+            // альтернативный вариант преобразования в объект
             // const object = {};
             // formData.forEach(function(value, key) {
             //     object[key] = value;
@@ -319,11 +317,11 @@ function form (formSelector, modalTimerID) {
     // function PostData(form) {
     //     form.addEventListener('submit', (e) => { // Добавляем на форму обработчик событий (событие - отправка формы)
     //         e.preventDefault(); // Предотвращаем стандартное действие формы
-    //         // 1. Сам запрос
+            // 1. Сам запрос
     //         const request = new XMLHttpRequest(); // Записываем запрос в переменную\константу
     //         request.open('POST', 'server.php'); // Указываем параметры запроса
     //         request.setRequestHeader('Content-type', 'application/json'); // Заголовок запроса для JSON        
-    //         // ДЛЯ ОБЪЕКТА: заголовок, если у нас объект, указывать не нужно, а то работать не будет!
+            // ДЛЯ ОБЪЕКТА: заголовок, если у нас объект, указывать не нужно, а то работать не будет!
     //         // request.setRequestHeader('Content-type', 'multipart/form-data'); - пусть будет тут на всякий случай;
     //         const formData = new FormData(form); //Собираем данные из формы в один объект для последующей отправки объекта в запросе:
     //         // Ниже блок кода с допнастройкой для отправки данных в виде JSON; Если не нужен - удалить!
@@ -341,8 +339,7 @@ function form (formSelector, modalTimerID) {
     //             if (request.status === 200) { // если приходит успешный статус 200, рапортуем об успехе
     //                 console.log(request.response); // выводим в консоль ответ на запрос
     //                 showThanksModal(message.success);
-    //                 form.reset(); // после успешной отправки форма сбрасывается                
-    //                 // statusMessage.remove();                - можно удалить, не используется 
+    //                 form.reset(); // после успешной отправки форма сбрасывается
     //             } else { // если другой статус, кроме 200, рапортуем об ошибке
     //                 showThanksModal(message.failure);
     //             }
@@ -386,6 +383,41 @@ function form (formSelector, modalTimerID) {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (form);
+
+/***/ }),
+
+/***/ "./js/modules/hint.js":
+/*!****************************!*\
+  !*** ./js/modules/hint.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//-----------------------hint-----------------------------
+function hint () {
+	const hintBtn = document.querySelector('#hint__btn');
+	const hintDesc = document.querySelector('#hint__description');
+	const crossPointer = document.querySelector('#hint__pointer-close');
+	const hintPointer = document.querySelector('#hint__pointer');
+	const hintWrapper = document.querySelector('#hint__wrapper');
+	
+	function hideHintPointer () {
+		hintPointer.classList.add('hint__pointer--hidden');
+	};
+	function openHintInfo () {
+		hintPointer.classList.add('hint__pointer--hidden');
+		hintWrapper.style.alignItems = "flex-start";
+		hintDesc.classList.toggle('hint__description--active');
+	}
+	
+	hintBtn.onclick = openHintInfo;
+	crossPointer.onclick = hideHintPointer;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (hint);
 
 /***/ }),
 
@@ -852,6 +884,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_timer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/timer */ "./js/modules/timer.js");
 /* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/slider */ "./js/modules/slider.js");
 /* harmony import */ var _modules_modal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/modal */ "./js/modules/modal.js");
+/* harmony import */ var _modules_hint__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/hint */ "./js/modules/hint.js");
+
+
 
 
 
@@ -871,6 +906,7 @@ window.addEventListener('DOMContentLoaded', () => {
     (0,_modules_timer__WEBPACK_IMPORTED_MODULE_4__["default"])('2023-01-01');
     (0,_modules_slider__WEBPACK_IMPORTED_MODULE_5__["default"])();
     (0,_modules_modal__WEBPACK_IMPORTED_MODULE_6__["default"])('[data-modal]', '.modal', modalTimerID);
+    (0,_modules_hint__WEBPACK_IMPORTED_MODULE_7__["default"])();
 });
 })();
 

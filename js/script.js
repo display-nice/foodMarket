@@ -6,6 +6,8 @@ import timer from './modules/timer';
 import slider from './modules/slider';
 import modal from './modules/modal';
 import {openCallbackScreen} from './modules/modal';
+import hint from './modules/hint';
+
 
 window.addEventListener('DOMContentLoaded', () => {
     // модальное окно откроется через 50 секунд после открытия страницы
@@ -17,4 +19,5 @@ window.addEventListener('DOMContentLoaded', () => {
     timer('2023-01-01');
     slider();
     modal('[data-modal]', '.modal', modalTimerID);
+    hint();
 });

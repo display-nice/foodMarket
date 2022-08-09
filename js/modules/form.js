@@ -3,7 +3,7 @@ import {postData} from '../services/services';
 
 function form (formSelector, modalTimerID) {
     // ----------------------------Отправка формы на сервер ---------------------------------------
-    // сбросить кэш на винде: shift+f5
+    // сбросить кэш на винде: shift+f5, либо ctrl+f5 (firefox)
 
     const forms = document.querySelectorAll(formSelector); // Берём все формы
     const message = { // Создаём объект-хранилище текстов сообщений
@@ -15,8 +15,6 @@ function form (formSelector, modalTimerID) {
         bindPostData(item);
     });
 
-
-
     function bindPostData(form) {
         form.addEventListener('submit', (e) => { // Добавляем на форму обработчик событий (событие - отправка формы)
             e.preventDefault(); // Предотвращаем стандартное действие формы
@@ -25,7 +23,7 @@ function form (formSelector, modalTimerID) {
             //берём formData, превращ. в массив массивов, кот. превращ. в объект, кот. превращ. в джсон.
             const json = JSON.stringify( Object.fromEntries(formData.entries()) );
 
-            // альтернативный вариант преобразования в объект (объект ли? я уже запутался)
+            // альтернативный вариант преобразования в объект
             // const object = {};
             // formData.forEach(function(value, key) {
             //     object[key] = value;
@@ -61,11 +59,11 @@ function form (formSelector, modalTimerID) {
     // function PostData(form) {
     //     form.addEventListener('submit', (e) => { // Добавляем на форму обработчик событий (событие - отправка формы)
     //         e.preventDefault(); // Предотвращаем стандартное действие формы
-    //         // 1. Сам запрос
+            // 1. Сам запрос
     //         const request = new XMLHttpRequest(); // Записываем запрос в переменную\константу
     //         request.open('POST', 'server.php'); // Указываем параметры запроса
     //         request.setRequestHeader('Content-type', 'application/json'); // Заголовок запроса для JSON        
-    //         // ДЛЯ ОБЪЕКТА: заголовок, если у нас объект, указывать не нужно, а то работать не будет!
+            // ДЛЯ ОБЪЕКТА: заголовок, если у нас объект, указывать не нужно, а то работать не будет!
     //         // request.setRequestHeader('Content-type', 'multipart/form-data'); - пусть будет тут на всякий случай;
     //         const formData = new FormData(form); //Собираем данные из формы в один объект для последующей отправки объекта в запросе:
     //         // Ниже блок кода с допнастройкой для отправки данных в виде JSON; Если не нужен - удалить!
@@ -83,8 +81,7 @@ function form (formSelector, modalTimerID) {
     //             if (request.status === 200) { // если приходит успешный статус 200, рапортуем об успехе
     //                 console.log(request.response); // выводим в консоль ответ на запрос
     //                 showThanksModal(message.success);
-    //                 form.reset(); // после успешной отправки форма сбрасывается                
-    //                 // statusMessage.remove();                - можно удалить, не используется 
+    //                 form.reset(); // после успешной отправки форма сбрасывается
     //             } else { // если другой статус, кроме 200, рапортуем об ошибке
     //                 showThanksModal(message.failure);
     //             }
